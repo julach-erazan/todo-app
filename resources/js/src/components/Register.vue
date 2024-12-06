@@ -33,16 +33,6 @@
                         required
                     />
                 </div>
-                <div class="form-group">
-                    <label for="password_confirmation">Confirm Password</label>
-                    <input
-                        type="password"
-                        id="password_confirmation"
-                        v-model="password_confirmation"
-                        placeholder="Re-enter your password"
-                        required
-                    />
-                </div>
                 <button type="submit">Register</button>
             </form>
             <p class="my-[10px]">
@@ -64,12 +54,12 @@
 import axios from "axios";
 
 export default {
+
     data() {
         return {
             name: "",
             email: "",
             password: "",
-            password_confirmation: "",
             errorMessage: "",
             successMessage: "",
         };
@@ -78,11 +68,10 @@ export default {
         async handleRegister() {
             try {
                 // Call the Laravel API endpoint for registration
-                const response = await axios.post(`${process.env.VUE_APP_API_URL}/register`, {
+                const response = await axios.post(`http://127.0.0.1:8000/register`, {
                     name: this.name,
                     email: this.email,
                     password: this.password,
-                    password_confirmation: this.password_confirmation,
                 });
 
                 // Handle success response
@@ -94,24 +83,13 @@ export default {
                 this.$router.push("/login");
             } catch (error) {
                 // Handle error response
-                
-                if (error.response && error.response.data.errors) {
-                    this.errorMessage = Object.values(
-                        error.response.data.errors
-                    )
-                        .flat()
-                        .join(", ");
-                } else {
-                    this.errorMessage = error.response?.data?.message || "An error occurred during registration.";
-                }
-                this.successMessage = "";
+                console.log(error)
             }
         },
         resetForm() {
             this.name = "";
             this.email = "";
             this.password = "";
-            this.password_confirmation = "";
         },
     },
 };
