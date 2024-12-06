@@ -10,7 +10,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['user_name', 'email', 'password'];
+    protected $fillable = ['name', 'email', 'password'];
 
     // Define relationship with tasks
     public function tasks()
