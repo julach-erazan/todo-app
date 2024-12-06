@@ -34,27 +34,27 @@
 
 <script>
 export default {
-    data() {
-        return {
-            email: "",
-            password: "",
-            errorMessage: "",
-        };
-    },
-    methods: {
-        handleLogin() {
-      // Dummy login action
-      console.log(this.email);
-      if (this.email === 'test@example.com' && this.password === '123') {
-        alert('Login successful!');
-        this.$router.push('/'); // Navigate to dashboard
+  data() {
+    return {
+      email: "",
+      password: "",
+      errorMessage: "",
+    };
+  },
+  methods: {
+    handleLogin() {
+      // Example login logic
+      if (this.email === "test@example.com" && this.password === "123") {
+        localStorage.setItem("isLoggedIn", true); // Save login status
+        this.$router.push("/dashboard"); // Redirect to dashboard
       } else {
-        alert('Invalid credentials!');
+        this.errorMessage = "Invalid credentials!";
       }
     },
-    },
+  },
 };
 </script>
+
 
 <style scoped>
 .login-container {
