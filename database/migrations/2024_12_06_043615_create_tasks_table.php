@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateTasksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->id(); // Creates 'task_id'
-            $table->unsignedBigInteger('user_id');
-            $table->text('note');
-            $table->timestamps();
-    
-            // Foreign key constraint
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+            $table->id(); // Auto-incrementing primary key for task ID
+            $table->string('text'); // Task description
+            $table->timestamps(); // Adds 'created_at' and 'updated_at' columns
+        });        
     }
 
     /**
@@ -29,4 +25,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('tasks');
     }
-};
+}
