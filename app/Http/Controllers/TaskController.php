@@ -2,48 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Task;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 
-class TodoController extends Controller
+class TaskController extends BaseController
 {
-    public function index()
-    {
-        $todos = Todo::where('user_id', auth()->id())->get();
-        return response()->json(['todos' => $todos]);
-    }
-
+    // Create a new task
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'text' => 'required|string|max:255',
+            'user_id' => 'required|exists:user,id', // Ensure the user_id exists in the users table
         ]);
 
-        $todo = Todo::create([
-            'user_id' => auth()->id(),
-            'text' => $request->text,
+        $task = Task::create([
+            'text' => $validatedData['text'],
+            'user_id' => $validatedData['user_id'],
         ]);
 
-        return response()->json(['todo' => $todo], 201);
+        return response()->json(['message' => 'Task created successfully!', 'task' => $task], 201);
     }
 
+    // Get all tasks
+    public function index()
+    {
+        $tasks = Task::with('user')->get(); // Include user details
+        return response()->json($tasks, 200);
+    }
+
+    // Get a task by ID
+    public function show($id)
+    {
+        $task = Task::with('user')->find($id);
+
+        if (!$task) {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
+
+        return response()->json($task, 200);
+    }
+
+    // Update a task
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'text' => 'required|string|max:255',
+        $validatedData = $request->validate([
+            'text' => 'sometimes|required|string|max:255',
+            'user_id' => 'sometimes|required|exists:user,id',
         ]);
 
-        $todo = Todo::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
-        $todo->update(['text' => $request->text]);
+        $task = Task::find($id);
 
-        return response()->json(['message' => 'Todo updated successfully']);
+        if (!$task) {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
+
+        $task->update($validatedData);
+
+        return response()->json(['message' => 'Task updated successfully!', 'task' => $task], 200);
     }
 
+    // Delete a task
     public function destroy($id)
     {
-        $todo = Todo::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
-        $todo->delete();
+        $task = Task::find($id);
 
-        return response()->json(['message' => 'Todo deleted successfully']);
+        if (!$task) {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
+
+        $task->delete();
+
+        return response()->json(['message' => 'Task deleted successfully!'], 200);
     }
 }
