@@ -89,7 +89,7 @@ export default {
         async fetchTodos() {
             this.loading = true;
             try {
-                const response = await axios.get(`${process.env.VUE_APP_API_URL}/tasks`);
+                const response = await axios.get(`tasks`);
                 this.todos = response.data.todos; // Assuming API returns todos array
             } catch (error) {
                 console.error("Error fetching todos:", error);
@@ -103,7 +103,7 @@ export default {
             if (this.newTodoText.trim() !== "") {
                 this.loading = true;
                 try {
-                    const response = await axios.post(`${process.env.VUE_APP_API_URL}/tasks`, {
+                    const response = await axios.post(`http://127.0.0.1:8000/add/tasks`, {
                         text: this.newTodoText.trim(),
                     });
                     this.todos.push(response.data.todo); // Add the new todo to the list
