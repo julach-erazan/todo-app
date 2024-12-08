@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controller;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controller as BaseController;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     public function login(Request $request)
     {
@@ -19,13 +20,16 @@ class AuthController extends Controller
             $token = $user->createToken('authToken')->plainTextToken;
 
             return response()->json([
-                'message' => 'Login successful',
+                'success' => true,
                 'token' => $token,
-            ], 200);
+                'user' => $user,
+            ]);
         }
 
         return response()->json([
-            'message' => 'Invalid credentials',
+            'success' => false,
+            'message' => 'Invalid email or password.',
         ], 401);
     }
+
 }

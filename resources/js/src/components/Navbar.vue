@@ -23,6 +23,8 @@ export default {
   methods: {
     handleLogout() {
       // Emit a logout event to the parent component
+      localStorage.setItem('isLoggedIn', false);
+      localStorage.removeItem('token');
       this.$router.push('/login');
     },
   },
