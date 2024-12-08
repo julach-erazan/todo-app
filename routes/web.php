@@ -10,3 +10,4 @@ Route::get('/', function () {
 
 Route::post('/user/register', [UserController::class, 'register']);
 Route::post('user/login', [AuthController::class, 'login']);
+Route::post('add/tasks', [TaskController::class, 'store']);
