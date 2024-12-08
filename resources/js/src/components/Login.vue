@@ -33,22 +33,40 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
       email: "",
       password: "",
       errorMessage: "",
+      loading: false,
     };
   },
   methods: {
-    handleLogin() {
-      // Example login logic
-      if (this.email === "test@example.com" && this.password === "123") {
-        localStorage.setItem("isLoggedIn", true); // Save login status
-        this.$router.push("/dashboard"); // Redirect to dashboard
-      } else {
-        this.errorMessage = "Invalid credentials!";
+    async handleLogin() {
+      this.loading = true;
+      this.errorMessage = ""; // Clear any previous error messages
+
+      try {
+        // Send login request to the backend
+        const response = await axios.post("http://127.0.0.1:8000/user/login", {
+          email: this.email,
+          password: this.password,
+        });
+
+        // If successful, store token and redirect
+        if (response.data.success) {
+          localStorage.setItem("token", response.data.token); // Store token
+          this.$router.push("/dashboard"); // Redirect to dashboard
+        } else {
+          this.errorMessage = response.data.message; // Show error from backend
+        }
+      } catch (error) {
+        this.errorMessage = error.response?.data?.message || "An error occurred during login.";
+      } finally {
+        this.loading = false;
       }
     },
   },
