@@ -2,7 +2,7 @@
     <div class="register-container">
         <div class="register-wrapper">
             <h1 class="font-bold text-[20px]">Register</h1>
-            <form @submit.prevent="handleRegister">
+            <form @submit.prevent="handleRegister" method="POST">
                 <div class="form-group">
                     <label for="name">Full Name</label>
                     <input
@@ -53,8 +53,14 @@
 <script>
 import axios from "axios";
 
-export default {
+const csrfToken = document.head.querySelector(
+    'meta[name="csrf-token"]'
+).content;
 
+// Add CSRF token to axios headers
+axios.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken;
+
+export default {
     data() {
         return {
             name: "",
@@ -68,22 +74,32 @@ export default {
         async handleRegister() {
             try {
                 // Call the Laravel API endpoint for registration
-                const response = await axios.post(`http://127.0.0.1:8000/register`, {
-                    name: this.name,
-                    email: this.email,
-                    password: this.password,
-                });
+                const response = await axios.post(
+                    `http://127.0.0.1:8000/user/register`,
+                    {
+                        name: this.name,
+                        email: this.email,
+                        password: this.password,
+                    },
+                    {
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "X-CSRF-TOKEN": csrfToken,
+                        },
+                    }
+                );
 
                 // Handle success response
-                this.successMessage = response.data.message || "Registration successful.";
+                this.successMessage =
+                    response.data.message || "Registration successful.";
                 this.errorMessage = "";
                 this.resetForm();
 
                 // Optionally redirect the user to the login page
-                this.$router.push("/login");
+                // this.$router.push("/login");
             } catch (error) {
                 // Handle error response
-                console.log(error)
+                console.log(error);
             }
         },
         resetForm() {
