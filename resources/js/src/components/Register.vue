@@ -95,8 +95,6 @@ export default {
                 this.errorMessage = "";
                 this.resetForm();
 
-                // Optionally redirect the user to the login page
-                // this.$router.push("/login");
             } catch (error) {
                 // Handle error response
                 console.log(error);
