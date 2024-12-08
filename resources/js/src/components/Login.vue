@@ -25,10 +25,14 @@
                 </div>
                 <button type="submit">Login</button>
             </form>
-            <p class="my-[10px]">Don't have an account? <router-link to="/register" class="text-[blue]"> Signup now </router-link></p>
+            <p class="my-[10px]">
+                Don't have an account?
+                <router-link to="/register" class="text-[blue]">
+                    Signup now
+                </router-link>
+            </p>
             <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
-
     </div>
 </template>
 
@@ -54,7 +58,8 @@ export default {
         const response = await axios.post("http://127.0.0.1:8000/user/login", {
           email: this.email,
           password: this.password,
-        });
+        }
+        );
 
         // If successful, store token and redirect
         if (response.data.success) {
@@ -72,7 +77,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .login-container {
