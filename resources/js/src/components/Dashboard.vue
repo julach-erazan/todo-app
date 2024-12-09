@@ -61,6 +61,7 @@
                     </li>
                 </ul>
             </div>
+            <button @click="fetchTodos()">mkjnk</button>
         </div>
     </div>
 </template>
@@ -87,78 +88,78 @@ export default {
     methods: {
         // Fetch todos from the backend
         async fetchTodos() {
+            const userId = localStorage.getItem("userId");
+
             this.loading = true;
             try {
-                const response = await axios.get(`tasks`);
-                this.todos = response.data.todos; // Assuming API returns todos array
+                const response = await axios.get(`http://127.0.0.1:8000/tasks/view?user_id=${userId}`);
+                this.todos = response.data.tasks;
             } catch (error) {
                 console.error("Error fetching todos:", error);
                 this.error = "Failed to fetch todos.";
-            } finally {
-                this.loading = false;
             }
         },
         // Add a new todo
-        async addTodo() {
-            if (this.newTodoText.trim() !== "") {
-                this.loading = true;
-                try {
-                    const response = await axios.post(`http://127.0.0.1:8000/add/tasks`, {
-                        text: this.newTodoText.trim(),
-                    });
-                    this.todos.push(response.data.todo); // Add the new todo to the list
-                    this.newTodoText = "";
-                } catch (error) {
-                    console.error("Error adding todo:", error);
-                    this.error = "Failed to add todo.";
-                } finally {
-                    this.loading = false;
-                }
-            }
-        },
+        // async addTodo() {
+        //     if (this.newTodoText.trim() !== "") {
+        //         this.loading = true;
+        //         try {
+        //             const response = await axios.post(`http://127.0.0.1:8000/add/tasks`, {
+        //                 text: this.newTodoText.trim(),
+        //             });
+        //             this.todos.push(response.data.todo); // Add the new todo to the list
+        //             this.newTodoText = "";
+        //         } catch (error) {
+        //             console.error("Error adding todo:", error);
+        //             this.error = "Failed to add todo.";
+        //         } finally {
+        //             this.loading = false;
+        //         }
+        //     }
+        // },
         // Edit an existing todo
-        editTodo(index) {
-            this.editingIndex = index;
-            this.editedTodoText = this.todos[index].text;
-        },
+        // editTodo(index) {
+        //     this.editingIndex = index;
+        //     this.editedTodoText = this.todos[index].text;
+        // },
         // Update the todo after editing
-        async updateTodo(index) {
-            if (this.editedTodoText.trim() !== "") {
-                const todo = this.todos[index];
-                this.loading = true;
-                try {
-                    await axios.put(`${process.env.VUE_APP_API_URL}/tasks/${todo.id}`, {
-                        text: this.editedTodoText.trim(),
-                    });
-                    this.todos[index].text = this.editedTodoText.trim();
-                    this.editingIndex = null;
-                    this.editedTodoText = "";
-                } catch (error) {
-                    console.error("Error updating todo:", error);
-                    this.error = "Failed to update todo.";
-                } finally {
-                    this.loading = false;
-                }
-            }
-        },
+        // async updateTodo(index) {
+        //     if (this.editedTodoText.trim() !== "") {
+        //         const todo = this.todos[index];
+        //         this.loading = true;
+        //         try {
+        //             await axios.put(`${process.env.VUE_APP_API_URL}/tasks/${todo.id}`, {
+        //                 text: this.editedTodoText.trim(),
+        //             });
+        //             this.todos[index].text = this.editedTodoText.trim();
+        //             this.editingIndex = null;
+        //             this.editedTodoText = "";
+        //         } catch (error) {
+        //             console.error("Error updating todo:", error);
+        //             this.error = "Failed to update todo.";
+        //         } finally {
+        //             this.loading = false;
+        //         }
+        //     }
+        // },
         // Delete a todo
-        async deleteTodo(index) {
-            const todo = this.todos[index];
-            this.loading = true;
-            try {
-                await axios.delete(`${process.env.VUE_APP_API_URL}/tasks/${todo.id}`);
-                this.todos.splice(index, 1);
-            } catch (error) {
-                console.error("Error deleting todo:", error);
-                this.error = "Failed to delete todo.";
-            } finally {
-                this.loading = false;
-            }
-        },
+        // async deleteTodo(index) {
+        //     const todo = this.todos[index];
+        //     this.loading = true;
+        //     try {
+        //         await axios.delete(`${process.env.VUE_APP_API_URL}/tasks/${todo.id}`);
+        //         this.todos.splice(index, 1);
+        //     } catch (error) {
+        //         console.error("Error deleting todo:", error);
+        //         this.error = "Failed to delete todo.";
+        //     } finally {
+        //         this.loading = false;
+        //     }
+        // },
     },
-    async created() {
-        await this.fetchTodos(); // Load todos when the component is created
-    },
+    // async created() {
+    //     await this.fetchTodos(); // Load todos when the component is created
+    // },
 };
 </script>
 
