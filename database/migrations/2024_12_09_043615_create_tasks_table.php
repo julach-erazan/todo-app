@@ -14,8 +14,11 @@ class CreateTasksTable extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id(); // Auto-incrementing primary key for task ID
             $table->string('text'); // Task description
+            $table->foreignId('user_id') // Foreign key column
+                  ->constrained('users') // References 'id' on 'users' table
+                  ->onDelete('cascade'); // Deletes tasks if the user is deleted
             $table->timestamps(); // Adds 'created_at' and 'updated_at' columns
-        });        
+        });
     }
 
     /**

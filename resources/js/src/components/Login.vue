@@ -51,8 +51,7 @@ export default {
   methods: {
     async handleLogin() {
       this.loading = true;
-      this.errorMessage = ""; // Clear any previous error messages
-
+      this.errorMessage = "";
       try {
         // Send login request to the backend
         const response = await axios.post("http://127.0.0.1:8000/user/login", {
@@ -63,11 +62,12 @@ export default {
 
         // If successful, store token and redirect
         if (response.data.success) {
-          localStorage.setItem("token", response.data.token); // Store token
-          localStorage.setItem("email", response.data.user.email); // Store email
-          this.$router.push("/dashboard"); // Redirect to dashboard
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("email", response.data.user.email);
+          localStorage.setItem("userId", response.data.user.id);
+          this.$router.push("/dashboard");
         } else {
-          this.errorMessage = response.data.message; // Show error from backend
+          this.errorMessage = response.data.message; 
         }
       } catch (error) {
         this.errorMessage = error.response?.data?.message || "An error occurred during login.";
