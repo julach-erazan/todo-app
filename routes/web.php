@@ -13,3 +13,5 @@ Route::post('/user/register', [UserController::class, 'register']);
 Route::post('/user/login', [AuthController::class, 'login']);
 Route::get('tasks/view', [TaskController::class, 'view']);
 Route::post('tasks/add', [TaskController::class, 'add']);
+Route::delete('/tasks/delete/{id}', [TaskController::class, 'delete']);
+Route::put('/tasks/{id}', [TaskController::class, 'update']);

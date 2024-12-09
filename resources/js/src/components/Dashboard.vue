@@ -76,12 +76,12 @@ export default {
     data() {
         return {
             userName: localStorage.getItem("email"),
-            todos: [], // Array to store todos
-            newTodoText: "", // Input for new todo
-            editingIndex: null, // Index of the todo being edited
-            editedTodoText: "", // Temporary text for editing
-            loading: false, // Loading state for actions
-            error: null, // Error state
+            todos: [],
+            newTodoText: "",
+            editingIndex: null,
+            editedTodoText: "",
+            loading: false,
+            error: null,
         };
     },
     methods: {
@@ -115,10 +115,9 @@ export default {
                         }
                     );
 
-                    // Assuming API returns the newly created task
-                    const newTask = response.data.task; // Adjust based on your API response structure
-                    this.todos.push(newTask); // Add the new todo to the list
-                    this.newTodoText = ""; // Clear the input field
+                    const newTask = response.data.task;
+                    this.todos.push(newTask);
+                    this.newTodoText = "";
                 } catch (error) {
                     console.error("Error adding todo:", error);
                     this.error = "Failed to add todo.";
@@ -153,24 +152,25 @@ export default {
         //         }
         //     }
         // },
+
         // Delete a todo
-        // async deleteTodo(index) {
-        //     const todo = this.todos[index];
-        //     this.loading = true;
-        //     try {
-        //         await axios.delete(`${process.env.VUE_APP_API_URL}/tasks/${todo.id}`);
-        //         this.todos.splice(index, 1);
-        //     } catch (error) {
-        //         console.error("Error deleting todo:", error);
-        //         this.error = "Failed to delete todo.";
-        //     } finally {
-        //         this.loading = false;
-        //     }
-        // },
+        async deleteTodo(index) {
+            const todo = this.todos[index];
+            this.loading = true;
+            try {
+                await axios.delete(`http://127.0.0.1:8000/tasks/delete/${todo.id}`);
+                this.todos.splice(index, 1);
+            } catch (error) {
+                console.error("Error deleting todo:", error);
+                this.error = "Failed to delete todo.";
+            } finally {
+                this.loading = false;
+            }
+        },
     },
-    // async created() {
-    //     await this.fetchTodos(); // Load todos when the component is created
-    // },
+    async created() {
+        await this.fetchTodos();
+    },
 };
 </script>
 

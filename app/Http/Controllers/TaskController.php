@@ -31,7 +31,7 @@ class TaskController extends BaseController
     {
         $validatedData = $request->validate([
             'text' => 'required|string|max:255',
-            'user_id' => 'required|exists:users,id', // Ensure the user_id exists in the users table
+            'user_id' => 'required|exists:users,id',
         ]);
 
         $task = Task::create([
@@ -62,16 +62,16 @@ class TaskController extends BaseController
     // }
 
     // // Delete a task
-    // public function destroy($id)
-    // {
-    //     $task = Task::find($id);
+    public function delete($id)
+    {
+        $task = Task::find($id);
 
-    //     if (!$task) {
-    //         return response()->json(['message' => 'Task not found'], 404);
-    //     }
+        if (!$task) {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
 
-    //     $task->delete();
+        $task->delete();
 
-    //     return response()->json(['message' => 'Task deleted successfully!'], 200);
-    // }
+        return response()->json(['message' => 'Task deleted successfully!'], 200);
+    }
 }
