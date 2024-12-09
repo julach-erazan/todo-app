@@ -42,24 +42,20 @@ class TaskController extends BaseController
         return response()->json(['message' => 'Task created successfully!', 'task' => $task], 201);
     }
 
-    // // Update a task
-    // public function update(Request $request, $id)
-    // {
-    //     $validatedData = $request->validate([
-    //         'text' => 'sometimes|required|string|max:255',
-    //         'user_id' => 'sometimes|required|exists:user,id',
-    //     ]);
+    // Update a task
+    public function edit(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'text' => 'required|string|max:255',
+        ]);
 
-    //     $task = Task::find($id);
+        $task = Task::findOrFail($id);
+        $task->update([
+            'text' => $validated['text'],
+        ]);
 
-    //     if (!$task) {
-    //         return response()->json(['message' => 'Task not found'], 404);
-    //     }
-
-    //     $task->update($validatedData);
-
-    //     return response()->json(['message' => 'Task updated successfully!', 'task' => $task], 200);
-    // }
+        return response()->json(['message' => 'Task updated successfully']);
+    }
 
     // // Delete a task
     public function delete($id)

@@ -13,10 +13,10 @@
                         v-model="newTodoText"
                         placeholder="Enter a new todo"
                         required
-                        :disabled="loading"
+                        :disabled="addLoading"
                     />
-                    <button type="submit" :disabled="loading">
-                        {{ loading ? "Adding..." : "Add" }}
+                    <button type="submit" :disabled="addLoading">
+                        {{ addLoading ? "Adding..." : "Add" }}
                     </button>
                 </form>
             </div>
@@ -24,7 +24,7 @@
             <!-- Todo List Section -->
             <div class="todo-list">
                 <h2>Todo List</h2>
-                <div v-if="loading">Loading todos...</div>
+                <div v-if="fetchLoading">Loading todos...</div>
                 <div v-else-if="todos.length === 0">
                     No todos available. Add one!
                 </div>
@@ -44,16 +44,21 @@
                                 <button
                                     v-if="editingIndex !== index"
                                     @click="editTodo(index)"
+                                    :disabled="updateLoading"
                                 >
                                     Edit
                                 </button>
                                 <button
                                     v-if="editingIndex === index"
                                     @click="updateTodo(index)"
+                                    :disabled="updateLoading"
                                 >
                                     Save
                                 </button>
-                                <button @click="deleteTodo(index)">
+                                <button
+                                    @click="deleteTodo(index)"
+                                    :disabled="deleteLoading"
+                                >
                                     Delete
                                 </button>
                             </div>
@@ -64,6 +69,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
 import axios from "axios";
@@ -80,7 +86,10 @@ export default {
             newTodoText: "",
             editingIndex: null,
             editedTodoText: "",
-            loading: false,
+            fetchLoading: false,
+            addLoading: false,
+            updateLoading: false,
+            deleteLoading: false,
             error: null,
         };
     },
@@ -88,8 +97,7 @@ export default {
         // Fetch todos from the backend
         async fetchTodos() {
             const userId = localStorage.getItem("userId");
-
-            this.loading = true;
+            this.fetchLoading = true;
             try {
                 const response = await axios.get(
                     `http://127.0.0.1:8000/tasks/view?user_id=${userId}`
@@ -98,14 +106,15 @@ export default {
             } catch (error) {
                 console.error("Error fetching todos:", error);
                 this.error = "Failed to fetch todos.";
+            } finally {
+                this.fetchLoading = false;
             }
         },
         // Add a new todo
         async addTodo() {
             const userId = localStorage.getItem("userId");
-
             if (this.newTodoText.trim() !== "") {
-                this.loading = true;
+                this.addLoading = true;
                 try {
                     const response = await axios.post(
                         "http://127.0.0.1:8000/tasks/add",
@@ -122,41 +131,38 @@ export default {
                     console.error("Error adding todo:", error);
                     this.error = "Failed to add todo.";
                 } finally {
-                    this.loading = false;
+                    this.addLoading = false;
                 }
             }
         },
-
         // Edit an existing todo
-        // editTodo(index) {
-        //     this.editingIndex = index;
-        //     this.editedTodoText = this.todos[index].text;
-        // },
-        // Update the todo after editing
-        // async updateTodo(index) {
-        //     if (this.editedTodoText.trim() !== "") {
-        //         const todo = this.todos[index];
-        //         this.loading = true;
-        //         try {
-        //             await axios.put(`${process.env.VUE_APP_API_URL}/tasks/${todo.id}`, {
-        //                 text: this.editedTodoText.trim(),
-        //             });
-        //             this.todos[index].text = this.editedTodoText.trim();
-        //             this.editingIndex = null;
-        //             this.editedTodoText = "";
-        //         } catch (error) {
-        //             console.error("Error updating todo:", error);
-        //             this.error = "Failed to update todo.";
-        //         } finally {
-        //             this.loading = false;
-        //         }
-        //     }
-        // },
-
+        editTodo(index) {
+            this.editingIndex = index;
+            this.editedTodoText = this.todos[index].text;
+        },
+        async updateTodo(index) {
+            if (this.editedTodoText.trim() !== "") {
+                const todo = this.todos[index];
+                this.updateLoading = true;
+                try {
+                    await axios.put(`http://127.0.0.1:8000/tasks/edit/${todo.id}`, {
+                        text: this.editedTodoText.trim(),
+                    });
+                    this.todos[index].text = this.editedTodoText.trim();
+                    this.editingIndex = null;
+                    this.editedTodoText = "";
+                } catch (error) {
+                    console.error("Error updating todo:", error);
+                    this.error = "Failed to update todo.";
+                } finally {
+                    this.updateLoading = false;
+                }
+            }
+        },
         // Delete a todo
         async deleteTodo(index) {
             const todo = this.todos[index];
-            this.loading = true;
+            this.deleteLoading = true;
             try {
                 await axios.delete(`http://127.0.0.1:8000/tasks/delete/${todo.id}`);
                 this.todos.splice(index, 1);
@@ -164,7 +170,7 @@ export default {
                 console.error("Error deleting todo:", error);
                 this.error = "Failed to delete todo.";
             } finally {
-                this.loading = false;
+                this.deleteLoading = false;
             }
         },
     },
