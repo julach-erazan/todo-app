@@ -75,7 +75,7 @@ export default {
     },
     data() {
         return {
-            userName: "John Doe", // Replace this with dynamic data fetched from the backend
+            userName: localStorage.getItem("email"),
             todos: [], // Array to store todos
             newTodoText: "", // Input for new todo
             editingIndex: null, // Index of the todo being edited
