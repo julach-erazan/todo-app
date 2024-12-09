@@ -61,7 +61,6 @@
                     </li>
                 </ul>
             </div>
-            <button @click="fetchTodos()">mkjnk</button>
         </div>
     </div>
 </template>
@@ -92,7 +91,9 @@ export default {
 
             this.loading = true;
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/tasks/view?user_id=${userId}`);
+                const response = await axios.get(
+                    `http://127.0.0.1:8000/tasks/view?user_id=${userId}`
+                );
                 this.todos = response.data.tasks;
             } catch (error) {
                 console.error("Error fetching todos:", error);
@@ -100,23 +101,33 @@ export default {
             }
         },
         // Add a new todo
-        // async addTodo() {
-        //     if (this.newTodoText.trim() !== "") {
-        //         this.loading = true;
-        //         try {
-        //             const response = await axios.post(`http://127.0.0.1:8000/add/tasks`, {
-        //                 text: this.newTodoText.trim(),
-        //             });
-        //             this.todos.push(response.data.todo); // Add the new todo to the list
-        //             this.newTodoText = "";
-        //         } catch (error) {
-        //             console.error("Error adding todo:", error);
-        //             this.error = "Failed to add todo.";
-        //         } finally {
-        //             this.loading = false;
-        //         }
-        //     }
-        // },
+        async addTodo() {
+            const userId = localStorage.getItem("userId");
+
+            if (this.newTodoText.trim() !== "") {
+                this.loading = true;
+                try {
+                    const response = await axios.post(
+                        "http://127.0.0.1:8000/tasks/add",
+                        {
+                            text: this.newTodoText.trim(),
+                            user_id: userId,
+                        }
+                    );
+
+                    // Assuming API returns the newly created task
+                    const newTask = response.data.task; // Adjust based on your API response structure
+                    this.todos.push(newTask); // Add the new todo to the list
+                    this.newTodoText = ""; // Clear the input field
+                } catch (error) {
+                    console.error("Error adding todo:", error);
+                    this.error = "Failed to add todo.";
+                } finally {
+                    this.loading = false;
+                }
+            }
+        },
+
         // Edit an existing todo
         // editTodo(index) {
         //     this.editingIndex = index;
@@ -166,8 +177,8 @@ export default {
 <style scoped>
 .dashboard-container {
     width: 100vw;
-    display:flex;
-    justify-content:center;
+    display: flex;
+    justify-content: center;
 }
 
 .todo-container {

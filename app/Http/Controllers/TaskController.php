@@ -27,33 +27,20 @@ class TaskController extends BaseController
     }
 
     // Create a new task
-    // public function store(Request $request)
-    // {
-    //     $validatedData = $request->validate([
-    //         'text' => 'required|string|max:255',
-    //         'user_id' => 'required|exists:users,id', // Ensure the user_id exists in the users table
-    //     ]);
+    public function add(Request $request)
+    {
+        $validatedData = $request->validate([
+            'text' => 'required|string|max:255',
+            'user_id' => 'required|exists:users,id', // Ensure the user_id exists in the users table
+        ]);
 
-    //     $task = Task::create([
-    //         'text' => $validatedData['text'],
-    //         'user_id' => $validatedData['user_id'],
-    //     ]);
+        $task = Task::create([
+            'text' => $validatedData['text'],
+            'user_id' => $validatedData['user_id'],
+        ]);
 
-    //     return response()->json(['message' => 'Task created successfully!', 'task' => $task], 201);
-    // }
-
-
-    // Get a task by ID
-    // public function show($id)
-    // {
-    //     $task = Task::with('user')->find($id);
-
-    //     if (!$task) {
-    //         return response()->json(['message' => 'Task not found'], 404);
-    //     }
-
-    //     return response()->json($task, 200);
-    // }
+        return response()->json(['message' => 'Task created successfully!', 'task' => $task], 201);
+    }
 
     // // Update a task
     // public function update(Request $request, $id)
