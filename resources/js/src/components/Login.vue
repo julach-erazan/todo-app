@@ -65,6 +65,7 @@ export default {
         if (response.data.success) {
           localStorage.setItem("token", response.data.token); // Store token
           localStorage.setItem("email", response.data.user.email); // Store email
+          localStorage.setItem("userId", response.data.user.id); // userId email
           this.$router.push("/dashboard"); // Redirect to dashboard
         } else {
           this.errorMessage = response.data.message; // Show error from backend
