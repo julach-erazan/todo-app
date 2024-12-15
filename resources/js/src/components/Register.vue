@@ -24,6 +24,15 @@
                     />
                 </div>
                 <div class="form-group">
+                    <label for="file">Image</label>
+                    <input
+                        type="file"
+                        id="image"
+                        @change="getImage"
+                        required
+                    />
+                </div>
+                <div class="form-group">
                     <label for="password">Password</label>
                     <input
                         type="password"
@@ -57,7 +66,6 @@ const csrfToken = document.head.querySelector(
     'meta[name="csrf-token"]'
 ).content;
 
-// Add CSRF token to axios headers
 axios.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken;
 
 export default {
@@ -66,21 +74,23 @@ export default {
             name: "",
             email: "",
             password: "",
+            image: null,
             errorMessage: "",
             successMessage: "",
         };
     },
     methods: {
         async handleRegister() {
+            const formData = new FormData();
+                formData.append("name", this.name);
+                formData.append("email", this.email);
+                formData.append("password", this.password);
+                formData.append("image", this.image);
+                
             try {
                 // Call the Laravel API endpoint for registration
                 const response = await axios.post(
-                    `http://127.0.0.1:8000/user/register`,
-                    {
-                        name: this.name,
-                        email: this.email,
-                        password: this.password,
-                    },
+                    `http://127.0.0.1:8000/user/register`,formData,
                     {
                         headers: {
                             "X-Requested-With": "XMLHttpRequest",
@@ -100,10 +110,14 @@ export default {
                 console.log(error);
             }
         },
+        getImage(e){
+            this.image = e.target.files[0];
+        },
         resetForm() {
             this.name = "";
             this.email = "";
             this.password = "";
+            image: null;
         },
     },
 };
