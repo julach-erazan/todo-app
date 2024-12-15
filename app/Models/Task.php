@@ -9,7 +9,13 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['text', 'user_id'];
+    // Define the fields that are mass-assignable
+    protected $fillable = [
+        'title',
+        'description',
+        'image_url',
+        'user_id',
+    ];
 
     public function user()
     {
