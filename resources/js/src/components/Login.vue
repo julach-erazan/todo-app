@@ -63,8 +63,9 @@ export default {
         // If successful, store token and redirect
         if (response.data.success) {
           localStorage.setItem("token", response.data.token);
-          localStorage.setItem("email", response.data.user.email);
+          localStorage.setItem("userName", response.data.user.name);
           localStorage.setItem("userId", response.data.user.id);
+          localStorage.setItem("imageURL", response.data.user.image);
           this.$router.push("/dashboard");
         } else {
           this.errorMessage = response.data.message; 

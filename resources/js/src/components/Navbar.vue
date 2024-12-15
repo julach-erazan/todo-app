@@ -1,10 +1,35 @@
 <template>
   <nav class="navbar">
     <div class="navbar-left">
-      <h1 class="app-title">Todo App</h1>
+      <h1 class="app-title">PostApp</h1>
     </div>
+
+    <div class="w-[400px] h-[40px] text-[20px] flex flex-row justify-evenly items-center">
+      <router-link to="/dashboard">
+        <font-awesome-icon :icon="['fas', 'house']" />
+      </router-link>
+
+      <router-link to="/viewpost">
+        <font-awesome-icon :icon="['far', 'heart']" />
+      </router-link>
+
+      <router-link to="/addpost">
+        <font-awesome-icon :icon="['fas', 'square-plus']" />
+      </router-link>
+
+      <router-link to="/feed" >
+        <font-awesome-icon :icon="['fas', 'magnifying-glass']" />
+      </router-link>
+    </div>
+
     <div class="navbar-right">
-      <span v-if="userName" class="user-name">Hello, {{ userName }}</span>
+      <div class="profileImg">
+        <img 
+          :src="`http://localhost:8000/storage/${imageURL}`" 
+          alt="Profile Picture" 
+        />
+      </div>
+      <span v-if="userName" class="user-name">Hi, {{ userName }}</span>
       <button v-if="userName" @click="handleLogout" class="logout-button">
         Logout
       </button>
@@ -17,14 +42,20 @@ export default {
   props: {
     userName: {
       type: String,
-      required: false, // Allows the component to be used even when the user is not logged in
+      required: false,
     },
+    imageURL: {
+      type: String,
+    }
   },
   methods: {
     handleLogout() {
       // Emit a logout event to the parent component
       localStorage.setItem('isLoggedIn', false);
       localStorage.removeItem('token');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('imageURL');
       this.$router.push('/login');
     },
   },
@@ -61,6 +92,12 @@ export default {
   display: flex;
   align-items: center;
   gap: 15px;
+}
+
+.profileImg img{
+  width:35px; 
+  height:35px;
+  border-radius:50%;
 }
 
 .user-name {
