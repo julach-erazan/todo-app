@@ -1,75 +1,72 @@
 <template>
-    <div class="dashboard-container">
-        <Navbar :userName="userName" @logout="logout" />
-        <div class="todo-container">
-            <h1 class="font-bold text-[25px]">Todo Dashboard</h1>
-
-            <!-- Add Todo Section -->
-            <div class="add-todo">
-                <h2>Add Todo</h2>
-                <form @submit.prevent="addTodo">
-                    <input
-                        type="text"
-                        v-model="newTodoText"
-                        placeholder="Enter a new todo"
-                        required
-                        :disabled="addLoading"
-                    />
-                    <button type="submit" :disabled="addLoading">
-                        {{ addLoading ? "Adding..." : "Add" }}
-                    </button>
-                </form>
-            </div>
-
-            <!-- Todo List Section -->
-            <div class="todo-list">
-                <h2>Todo List</h2>
-                <div v-if="fetchLoading">Loading todos...</div>
-                <div v-else-if="todos.length === 0">
-                    No todos available. Add one!
-                </div>
-                <ul>
-                    <li v-for="(todo, index) in todos" :key="todo.id">
-                        <div class="todo-item">
-                            <div v-if="editingIndex !== index">
-                                {{ todo.text }}
-                            </div>
-                            <input
-                                v-else
-                                type="text"
-                                v-model="editedTodoText"
-                                @keyup.enter="updateTodo(index)"
+    <Navbar :userName="userName" :imageURL="imageURL" @logout="logout" />
+    <div class="pt-[80px]">
+        <ul v-if="posts.length > 0">
+            <li
+                class="min-w-[500px] feed-container pt-[20px] flex flex-col items-center gap-[10px]"
+                v-for="(post, index) in posts"
+                :key="post.user_id"
+            >
+                <div
+                    class="post-container w-[80%] h-[500px] border-solid border-[#ccc] border-[1px] rounded-[20px] flex flex-col justify-between"
+                >
+                    <div
+                        class="user border-solid border-[#ccc] border-b-[1px] h-[50px] flex flex-row justify-between items-center px-[20px]"
+                    >
+                        <div
+                            class="profile flex flex-row items-center gap-[10px]"
+                        >
+                            <img
+                                :src="`http://localhost:8000/storage/${post.user_image}`"
+                                alt="profile image"
+                                class="w-[30px] h-[30px] rounded-[50%]"
                             />
-                            <div class="actions">
-                                <button
-                                    v-if="editingIndex !== index"
-                                    @click="editTodo(index)"
-                                    :disabled="updateLoading"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    v-if="editingIndex === index"
-                                    @click="updateTodo(index)"
-                                    :disabled="updateLoading"
-                                >
-                                    Save
-                                </button>
-                                <button
-                                    @click="deleteTodo(index)"
-                                    :disabled="deleteLoading"
-                                >
-                                    Delete
-                                </button>
-                            </div>
+                            <p>{{post.user_name}}</p>
                         </div>
-                    </li>
-                </ul>
-            </div>
+                        <div>
+                            <h1>{{ post.createdDate }}</h1>
+                        </div>
+                    </div>
+                    <div
+                        class="post min-h-[300px] flex flex-row flex-wrap md:justify-between justify-center items-center p-[20px]"
+                    >
+                        <img
+                            :src="`http://localhost:8000/storage/${post.image_url}`"
+                            alt="post image"
+                            class="w-[300px] h-[300px] object-cover rounded-[20px]"
+                        />
+                        <div class="min-w-[300px] w-[50%] h-[300px]">
+                            <h1 class="text-[25px] font-bold text-center">
+                                {{ post.title }}
+                            </h1>
+                            <p class="mt-[15px]">{{ post.description }}</p>
+                        </div>
+                    </div>
+                    <div
+                        class="actions border-solid border-[#ccc] border-t-[1px] h-[50px] flex flex-row items-center text-[20px] gap-[30px] px-[20px]"
+                    >
+                        <div>
+                            <font-awesome-icon :icon="['far', 'heart']" />
+                        </div>
+                        <div>
+                            <font-awesome-icon :icon="['far', 'comment']" />
+                        </div>
+                        <div>
+                            <font-awesome-icon :icon="['fas', 'share']" />
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <div v-else class="text-center mt-[50px]">
+            <h1 class="text-[20px] font-bold">No Posts Available</h1>
+            <p class="text-[#555]">
+                Looks like there are no posts yet. Create one to get started!
+            </p>
         </div>
     </div>
 </template>
-
 
 <script>
 import axios from "axios";
@@ -81,177 +78,40 @@ export default {
     },
     data() {
         return {
-            userName: localStorage.getItem("email"),
-            todos: [],
-            newTodoText: "",
-            editingIndex: null,
-            editedTodoText: "",
-            fetchLoading: false,
-            addLoading: false,
-            updateLoading: false,
-            deleteLoading: false,
-            error: null,
+            userName: localStorage.getItem("userName"),
+            imageURL: localStorage.getItem("imageURL"),
+            posts: [],
         };
     },
     methods: {
-        // Fetch todos from the backend
-        async fetchTodos() {
-            const userId = localStorage.getItem("userId");
-            this.fetchLoading = true;
+        async fetchAllPosts() {
             try {
                 const response = await axios.get(
-                    `http://127.0.0.1:8000/tasks/view?user_id=${userId}`
+                    `http://127.0.0.1:8000/post/allposts`
                 );
-                this.todos = response.data.tasks;
-            } catch (error) {
-                console.error("Error fetching todos:", error);
-                this.error = "Failed to fetch todos.";
-            } finally {
-                this.fetchLoading = false;
-            }
-        },
-        // Add a new todo
-        async addTodo() {
-            const userId = localStorage.getItem("userId");
-            if (this.newTodoText.trim() !== "") {
-                this.addLoading = true;
-                try {
-                    const response = await axios.post(
-                        "http://127.0.0.1:8000/tasks/add",
-                        {
-                            text: this.newTodoText.trim(),
-                            user_id: userId,
-                        }
-                    );
 
-                    const newTask = response.data.task;
-                    this.todos.push(newTask);
-                    this.newTodoText = "";
-                } catch (error) {
-                    console.error("Error adding todo:", error);
-                    this.error = "Failed to add todo.";
-                } finally {
-                    this.addLoading = false;
-                }
-            }
-        },
-        // Edit an existing todo
-        editTodo(index) {
-            this.editingIndex = index;
-            this.editedTodoText = this.todos[index].text;
-        },
-        async updateTodo(index) {
-            if (this.editedTodoText.trim() !== "") {
-                const todo = this.todos[index];
-                this.updateLoading = true;
-                try {
-                    await axios.put(`http://127.0.0.1:8000/tasks/edit/${todo.id}`, {
-                        text: this.editedTodoText.trim(),
+                this.posts = response.data.tasks.map((task) => {
+                    const date = new Date(task.task_created_at);
+                    const createdDate = date.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                     });
-                    this.todos[index].text = this.editedTodoText.trim();
-                    this.editingIndex = null;
-                    this.editedTodoText = "";
-                } catch (error) {
-                    console.error("Error updating todo:", error);
-                    this.error = "Failed to update todo.";
-                } finally {
-                    this.updateLoading = false;
-                }
-            }
-        },
-        // Delete a todo
-        async deleteTodo(index) {
-            const todo = this.todos[index];
-            this.deleteLoading = true;
-            try {
-                await axios.delete(`http://127.0.0.1:8000/tasks/delete/${todo.id}`);
-                this.todos.splice(index, 1);
+
+                    return {
+                        ...task,
+                        createdDate,
+                    };
+                });
+                
             } catch (error) {
-                console.error("Error deleting todo:", error);
-                this.error = "Failed to delete todo.";
-            } finally {
-                this.deleteLoading = false;
+                console.error("Error fetching posts:", error);
+                this.error = "Failed to fetch posts.";
             }
         },
     },
     async created() {
-        await this.fetchTodos();
+        await this.fetchAllPosts();
     },
 };
 </script>
-
-<style scoped>
-.dashboard-container {
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-}
-
-.todo-container {
-    width: 80%;
-    min-width: 400px;
-    min-width: 250px;
-    margin-top: 100px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1,
-h2 {
-    text-align: center;
-}
-
-.add-todo {
-    margin-bottom: 20px;
-}
-
-input {
-    padding: 10px;
-    margin-right: 10px;
-    width: calc(100% - 90px);
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-.todo-list ul {
-    list-style: none;
-    padding: 0;
-}
-
-.todo-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-}
-
-.actions button {
-    margin-left: 5px;
-    background-color: #28a745;
-}
-
-.actions button:last-child {
-    background-color: #dc3545;
-}
-
-.actions button:hover {
-    opacity: 0.8;
-}
-</style>
