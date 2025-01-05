@@ -5,6 +5,7 @@ import Dashboard from "../js/src/components/Dashboard.vue";
 import ViewPost from "../js/src/components/ViewPost.vue";
 import AddPost from "../js/src/components/AddPost.vue";
 import UpdatePost from "../js/src/components/UpdatePost.vue";
+import Search from "../js/src/components/Search.vue";
 
 const routes = [
   { path: "/login", name: "Login", component: Login },
@@ -24,6 +25,7 @@ const routes = [
     component: UpdatePost ,
     props: true,
   },
+  { path: "/search", name: "search", component: Search, },
 ];
 
 const router = createRouter({
