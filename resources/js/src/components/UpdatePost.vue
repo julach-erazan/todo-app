@@ -9,9 +9,9 @@
                     class="header h-[40px] border-solid border-[#ccc] border-b-[1px] px-[20px] flex items-center justify-between"
                 >
                     <h1 class="text-[20px] font-bold">Update a post</h1>
-                    <button type="submit" class="text-[18px] text-[#007bff]">
-                        Save
-                    </button>
+                    <router-link to="/viewpost" class="text-[18px] text-[#ff0000]">
+                        Close
+                    </router-link>
                 </div>
 
                 <div class="px-[20px] py-[10px]">
@@ -26,6 +26,9 @@
                         placeholder="Add a description"
                         required
                     ></textarea>
+                    <button type="submit" class="w-[100%] text-[18px] mt-[20px] text-[#007bff]">
+                        Save
+                    </button>
                 </div>
                 <p v-if="errorMessage" class="error-message">
                     {{ errorMessage }}
