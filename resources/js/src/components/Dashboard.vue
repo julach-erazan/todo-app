@@ -8,7 +8,7 @@
                 :key="post.user_id"
             >
                 <div
-                    class="post-container w-[80%] h-[500px] border-solid border-[#ccc] border-[1px] rounded-[20px] flex flex-col justify-between"
+                    class="post-container w-[80%] min-h-[500px] border-solid border-[#ccc] border-[1px] rounded-[20px] flex flex-col justify-between"
                 >
                     <div
                         class="user border-solid border-[#ccc] border-b-[1px] h-[50px] flex flex-row justify-between items-center px-[20px]"
