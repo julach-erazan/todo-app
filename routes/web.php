@@ -18,3 +18,5 @@ Route::get('/post/filter', [TaskController::class, 'filter']);
 Route::put('/post/edit/{id}', [TaskController::class, 'edit']);
 
 Route::get('/post/allposts', [TaskController::class, 'getPublicPosts']);
+
+Route::get('/post/search', [TaskController::class, 'search']);
