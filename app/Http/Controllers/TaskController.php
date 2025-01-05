@@ -143,4 +143,19 @@ class TaskController extends BaseController
 
         return response()->json(['message' => 'Task deleted successfully!'], 200);
     }
+
+    // Filter tasks based on various criteria
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $tasks = Task::where('title', 'like', "%$query%")
+            ->get();
+    
+        if ($tasks->isEmpty()) {
+            return response()->json(['message' => 'No tasks found'], 404);
+        }
+    
+        return response()->json(['tasks' => $tasks], 200);
+    }
+
 }
