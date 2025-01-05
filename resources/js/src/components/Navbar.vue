@@ -1,25 +1,61 @@
 <template>
   <nav class="navbar">
     <div class="navbar-left">
-      <h1 class="app-title">PostApp</h1>
+      <h1 class="app-title text-[#0067bc]">PostApp</h1>
     </div>
 
     <div class="w-[400px] h-[40px] text-[20px] flex flex-row justify-evenly items-center">
-      <router-link to="/dashboard">
-        <font-awesome-icon :icon="['fas', 'house']" />
-      </router-link>
+      <a>
+        <router-link to="/dashboard" active-class="active-link">
+          <font-awesome-icon 
+            v-if="$route.path === '/dashboard'" 
+            :icon="['fas', 'house']" 
+          />
+          <font-awesome-icon 
+            v-else 
+            :icon="['fas', 'house']" 
+          />
+        </router-link>
+      </a>
 
-      <router-link to="/viewpost">
-        <font-awesome-icon :icon="['far', 'heart']" />
-      </router-link>
+      <a>
+        <router-link to="/viewpost" active-class="active-link">
+          <font-awesome-icon 
+            v-if="$route.path === '/viewpost'"
+            :icon="['fas', 'heart']" 
+          />
+          <font-awesome-icon 
+            v-else
+            :icon="['far', 'heart']" 
+          />
+        </router-link>
+      </a>
 
-      <router-link to="/addpost">
-        <font-awesome-icon :icon="['fas', 'square-plus']" />
-      </router-link>
+      <a>
+        <router-link to="/addpost" active-class="active-link">
+        <font-awesome-icon 
+            v-if="$route.path === '/addpost'"
+            :icon="['fas', 'square-plus']" 
+          />
+          <font-awesome-icon 
+            v-else
+            :icon="['far', 'square-plus']" 
+          />
+        </router-link>
+      </a>
 
-      <router-link to="/feed" >
-        <font-awesome-icon :icon="['fas', 'magnifying-glass']" />
-      </router-link>
+      <a>
+        <router-link to="/search" active-class="active-link">
+           <font-awesome-icon 
+            v-if="$route.path === '/search'"
+            :icon="['fas', 'magnifying-glass']" 
+          />
+          <font-awesome-icon 
+            v-else
+            :icon="['fas', 'magnifying-glass']" 
+          />
+        </router-link>
+      </a>
     </div>
 
     <div class="navbar-right">
@@ -50,7 +86,6 @@ export default {
   },
   methods: {
     handleLogout() {
-      // Emit a logout event to the parent component
       localStorage.setItem('isLoggedIn', false);
       localStorage.removeItem('token');
       localStorage.removeItem('userName');
@@ -69,8 +104,8 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
+    background-color: #fff;
+    color: #b4b4b4;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: fixed;
     z-index:100;
@@ -92,6 +127,13 @@ export default {
   display: flex;
   align-items: center;
   gap: 15px;
+}
+
+.active-link{
+  color: #0067bc;
+  padding-bottom:3px;
+  border-bottom: 2px solid #0067bc;
+
 }
 
 .profileImg img{
