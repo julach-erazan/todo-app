@@ -14,19 +14,20 @@ class TaskController extends BaseController
     public function getPublicPosts()
     {
         $tasks = DB::table('tasks')
-            ->join('users', 'tasks.user_id', '=', 'users.id')
-            ->select(
-                'tasks.id as task_id',
-                'tasks.title',
-                'tasks.description',
-                'tasks.image_url',
-                'tasks.created_at as task_created_at',
-                'users.name as user_name',
-                'users.image as user_image'
-            )
-            ->get();
+        ->join('users', 'tasks.user_id', '=', 'users.id')
+        ->select(
+            'tasks.id as task_id',
+            'tasks.title',
+            'tasks.description',
+            'tasks.image_url',
+            'tasks.created_at as task_created_at',
+            'users.name as user_name',
+            'users.image as user_image'
+        )
+        ->orderBy('tasks.created_at', 'desc')
+        ->get();
 
-        return response()->json(['tasks' => $tasks]);
+    return response()->json(['tasks' => $tasks]);
     }
 
     // Get all tasks for a specific user
