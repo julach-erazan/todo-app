@@ -68,7 +68,7 @@ export default {
           localStorage.setItem("imageURL", response.data.user.image);
           this.$router.push("/dashboard");
         } else {
-          this.errorMessage = response.data.message; 
+          this.errorMessage = response.data.message;
         }
       } catch (error) {
         this.errorMessage = error.response?.data?.message || "An error occurred during login.";
