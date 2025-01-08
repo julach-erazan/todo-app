@@ -5,7 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
 
-Route::get('/', function () {
+Route::get('/{any}', function () {
     return view('welcome');
 });
 
